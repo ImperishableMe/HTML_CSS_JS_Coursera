@@ -70,6 +70,9 @@
                 this.has_started = true;
                 this.your_health = 100;
                 this.monster_health = 100;
+                while(this.log.length){
+                    this.log.pop();
+                }
             },
             giveUp : function (){
                 this.has_started = false;
@@ -79,12 +82,24 @@
                 var t2 = this.monster_health + val2;
                 
                 if(t2 <= 0) {
-                    alert("Mama! You won!");
-                    this.has_started = false;
+                    var rematch = confirm("Mama! You won! Want a rematch?");
+                    if(rematch){
+                        this.startGame();
+                        return;
+                    }
+                    else {
+                        this.has_started = false;
+                    }
                 }
                 else if(t1 <= 0 ){
-                    alert("You lost!");
-                    this.has_started = false;
+                    var rematch = confirm("Sad Mama! You lost! Want a rematch?");
+                    if(rematch){
+                        this.startGame();
+                        return;
+                    }
+                    else {
+                        this.has_started = false;
+                    }
                 }
                 this.your_health = Math.min(Math.max(t1,0),100);
                 this.monster_health = Math.max(t2,0);
