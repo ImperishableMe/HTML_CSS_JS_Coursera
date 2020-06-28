@@ -20,7 +20,7 @@
         <div class="small-6 columns">
             <h1 class="text-center">MONSTER</h1>
             <div class="healthbar">
-                <div class="healthbar text-center" :style="your_bar_class">
+                <div class="healthbar text-center" :style="monster_bar_class">
                     {{ monster_health }}
                 </div>
             </div>
@@ -86,7 +86,7 @@
                     alert("You lost!");
                     this.has_started = false;
                 }
-                this.your_health = Math.max(t1,0);
+                this.your_health = Math.min(Math.max(t1,0),100);
                 this.monster_health = Math.max(t2,0);
                 
             },
@@ -108,11 +108,11 @@
             },
             heal : function() {
                 var a1 = 10 ;//+ getRandomInt(1,10);
-                var a2 = this.getRandomInt(1,10);
+                var a2 = 5 + this.getRandomInt(1,10);
                 this.log.push("Player heals himself for "+ a1 + " points");
                 this.log.push("monster hit player for "+ a2 + " points");
 
-                this.oneRoundHandler(a1,-a2);
+                this.oneRoundHandler(a1-a2,0);
             }
 
         },
