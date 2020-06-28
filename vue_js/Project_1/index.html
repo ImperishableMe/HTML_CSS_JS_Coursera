@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Monster Slayer</title>
+    <script src="https://npmcdn.com/vue/dist/vue.js"></script>
+    <link rel="stylesheet" href="css/foundation.min.css">
+    <link rel="stylesheet" href="css/app.css">
+</head>
+<body>
+<div id="app">
+    <section class="row">
+        <div class="small-6 columns">
+            <h1 class="text-center">YOU</h1>
+            <div class="healthbar">
+                <div class="healthbar text-center" :style="your_bar_class">
+                    {{ your_health }}
+                </div>
+            </div>
+        </div>
+        <div class="small-6 columns">
+            <h1 class="text-center">MONSTER</h1>
+            <div class="healthbar">
+                <div class="healthbar text-center" :style="your_bar_class">
+                    {{ monster_health }}
+                </div>
+            </div>
+        </div>
+    </section>
+    <section class="row controls" v-if='!has_started'>
+        <div class="small-12 columns" @click="startGame" >
+            <button id="start-game">START NEW GAME</button>
+        </div>
+    </section>
+    <section class="row controls" v-else>
+        <div class="small-12 columns">
+            <button id="attack" @click="attack">ATTACK</button>
+            <button id="special-attack" @click="specialAttack">SPECIAL ATTACK</button>
+            <button id="heal" @click="heal">HEAL</button>
+            <button id="give-up" @click='giveUp'>GIVE UP</button>
+        </div>
+    </section>
+    <section class="row log">
+        <div class="small-12 columns">
+            <ul v-for='(single,index) in log'>
+                <li :class="{'player-turn' : index % 2,'monster-turn' : 1 - index % 2}">
+                    {{ single }}
+                </li>
+            </ul>
+        </div>
+    </section>
+</div>
+</body>
+
+<script>
+    var moja = new Vue({
+        el : "#app",
+        data : {
+            your_health : 80,
+            monster_health : 80,
+            has_started : false,
+            log : []
+        },
+        methods : {
+            getRandomInt : function (min, max) {
+                min = Math.ceil(min);
+                max = Math.floor(max);
+                return Math.floor(Math.random() * (max - min)) + min; //The maximum is exclusive and the minimum is inclusive
+            },
+            startGame : function (){
+                this.has_started = true;
+                this.your_health = 100;
+                this.monster_health = 100;
+            },
+            giveUp : function (){
+                this.has_started = false;
+            },
+            oneRoundHandler : function(val1, val2) {
+                var t1 = this.your_health + val1;
+                var t2 = this.monster_health + val2;
+                
+                if(t2 <= 0) {
+                    alert("Mama! You won!");
+                    this.has_started = false;
+                }
+                else if(t1 <= 0 ){
+                    alert("You lost!");
+                    this.has_started = false;
+                }
+                this.your_health = Math.max(t1,0);
+                this.monster_health = Math.max(t2,0);
+                
+            },
+            attack : function () {
+                var a1 = this.getRandomInt(1,10);
+                var a2 = this.getRandomInt(1,10);
+
+                this.log.push("Player hit monster for "+ a1 + " points");
+                this.log.push("monster hit player for "+ a2 + " points");
+                this.oneRoundHandler(-a1,-a2);
+            },
+            specialAttack : function() {
+                var a1 = this.getRandomInt(1,10);
+                var a2 = 10 + this.getRandomInt(1,10);
+                this.log.push("Player hit monster for "+ a1 + " points");
+                this.log.push("monster hit player for "+ a2 + " points");
+
+                this.oneRoundHandler(-a1,-a2);
+            },
+            heal : function() {
+                var a1 = 10 ;//+ getRandomInt(1,10);
+                var a2 = this.getRandomInt(1,10);
+                this.log.push("Player heals himself for "+ a1 + " points");
+                this.log.push("monster hit player for "+ a2 + " points");
+
+                this.oneRoundHandler(a1,-a2);
+            }
+
+        },
+        computed : {  
+            your_bar_class : function(){
+                return {
+                    "background-color": 'green',
+                    margin: 0,
+                    color: 'white',
+                    width : this.your_health + "%"
+                } ;    
+            },
+            monster_bar_class : function(){
+                return {
+                    "background-color": 'green',
+                    margin: 0,
+                    color: 'white',
+                    width : this.monster_health + "%"
+                } ;    
+            }
+        }        
+    });
+</script>
+
+</html>
